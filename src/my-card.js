@@ -17,13 +17,17 @@ export class MyCard extends LitElement {
     super();
     this.title = "My card",
     this.name = "defualt",
-    this.source = "#";
+    this.source = "#",
+    this.fancy = false;
   }
 
   static get styles() {
     return css`
       :host {
-        display: block;
+        display: inline-block
+        }
+      :host([fancy]) .card {
+        background-color: var(--my-card-fancy-bg, #FF0000)
         }
 
 .title{
@@ -37,9 +41,6 @@ export class MyCard extends LitElement {
 .description{
   color: white;
   font-size: 16px;
-  padding: 16px 16px;
-  margin: 2px 32px;
-  
 }
 
 .card {
@@ -70,12 +71,31 @@ export class MyCard extends LitElement {
 
 .img{
   width: 304px;
+  aspect-ratio: 1/1;
   border: 4px solid #ccc;
   border-radius: 8px;
   margin: 8px 48px;
+}
+
+details summary {
+    text-align: left;
+    font-size: 20px;
+    padding: 8px 0;
+  }
+
+details[open] summary {
+    font-weight: bold;
+  }
+  
+  details div {
+    border: 2px solid black;
+    text-align: left;
+    padding: 8px;
+    height: 70px;
+    overflow: auto;
+  }
  
 
-      }
     `;
   }
 
@@ -86,18 +106,29 @@ export class MyCard extends LitElement {
     <div class="card">
     <div class="title">${this.name}</div>
     <img src="${this.source}" class="img">
-    <p class="description"> The Moon is Earth's only natural satellite. It orbits around Earth at an average distance of 384,399 kilometres, about 30 times Earth's diameter, and completes an orbit every 29.5 days. This is the same length it takes the Moon to complete a rotation.</p>
+    <details ?open="${this.fancy}" @toggle="${this.openChanged}">
+    <summary>Description</summary>
+    <div class = "description">
+    <slot></slot>
     <a href="https://hax.psu.edu">
     <button class="btn">more</button>
-  </a>
-</div>`;
+    </a>
+  </div>
+  </details>
+  </div>`;
+  }
+
+  openChanged(event){
+    console.log(event.target);
+    this.fancy = event.target.open;
   }
 
   static get properties() {
     return {
       title: { type: String },
       name: { type: String },
-      source: { type: String }
+      source: { type: String },
+      fancy: { type: Boolean, reflect: true}
     };
   }
 }
